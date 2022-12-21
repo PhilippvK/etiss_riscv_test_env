@@ -1,0 +1,15 @@
+[submodule "etiss"]
+	path = etiss
+	url = https://github.com/tum-ei-eda/etiss.git
+[submodule "etiss_riscv_tests"]
+	path = etiss_riscv_tests
+	url = https://github.com/tum-ei-eda/etiss_riscv_tests.git
+[submodule "riscv-tests"]
+	path = riscv-tests
+	url = https://github.com/riscv-software-src/riscv-tests.git
+[submodule "M2-ISA-R"]
+	path = M2-ISA-R
+	url = https://github.com/tum-ei-eda/M2-ISA-R.git
+[submodule "etiss_arch_riscv"]
+	path = etiss_arch_riscv
+	url = https://github.com/tum-ei-eda/etiss_arch_riscv.git
