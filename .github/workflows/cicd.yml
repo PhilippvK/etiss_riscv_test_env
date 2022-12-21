@@ -1,0 +1,99 @@
+##
+## Copyright (c) 2022 TUM Department of Electrical and Computer Engineering.
+##
+## Licensed under the Apache License, Version 2.0 (the "License");
+## you may not use this file except in compliance with the License.
+## You may obtain a copy of the License at
+##
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+##
+
+# GitHub CI build pipeline
+name: CI build
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    strategy:
+      matrix:
+        python-version: ["3.8"]
+        xlen: [32]
+        exts: ["IMACFD"]
+        jit: ["tcc"]
+        # jit: ["tcc", "gcc", "llvm"]
+        # xlen: [32, 64]
+        # etiss-arch: ["RV32IMACFD", "RV64IMACFD"]
+    steps:
+    - name: Clone wrapper repo
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Initialize Virtualenv
+      run: |
+        python -m pip install --upgrade pip virtualenv
+        python -m venv .venv
+        pip install --upgrade pip setuptools wheel
+    - name: Get riscv-gcc
+      # TODO: custom build + rvv + clang as alternative?
+      run: |
+        sudo apt install -y gcc-riscv64-unknown-elf
+      run: |
+        cd etiss
+        mkdir build
+        cmake -DCMAKE_BUILD_TYPE=Debug -B build/
+        cmake --build -B build/
+    - name: Setup M2-ISA-R
+      run: |
+        source .venv/bin/activate
+        cd M2-ISA-R
+        pip install -e .
+    - name: Run M2-ISA-R
+      run: |
+        source .venv/bin/activate
+        coredsl2_parser etiss_arch_riscv/top.core_desc
+        etiss_writer etiss_arch_riscv/gen_model/top.m2isarmodel --static-scalars --separate
+        cp -r etiss_arch_riscv/gen_output/* etiss/ArchImpl/
+    - name: Setup ETISS
+      run: |
+        cd etiss
+        mkdir build
+        cmake -DCMAKE_BUILD_TYPE=Debug -B build/
+        cmake --build -B build/
+    - name: Setup riscv-tests
+      run: |
+        cd riscv-tests
+        autoconf
+        ./configure
+        make XLEN=${{ matrix.python-version }} isa
+    - name: Setup etiss_riscv_tests
+      run: |
+        source .venv/bin/activate
+        cd etiss_riscv_tests
+        pip install -r requirements.txt
+          - id: string
+        uses: ASzc/change-string-case-action@v1
+        with:
+          string: ${{ matrix.exts }}
+    - name: Run etiss_riscv_tests
+      continue-on-error: true
+      run: |
+        source .venv/bin/activate
+        etiss_riscv_tests/test.py --arch RV{{ matrix.xlen }}-{{ matrix.exts }} --bits {{ matrix.xlen }}  --ext {{ steps.string.outputs.lowercase }} --virt p --timeout 10 --jit {{ matrix.jit }} riscv-tests/isa etiss/build/bin/bare_etiss_processor
+    - name: Archive files
+      uses: actions/upload-artifact@v2
+      with:
+        name: result
+        path: etiss_riscv_tests/
