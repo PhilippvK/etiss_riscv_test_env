@@ -59,8 +59,10 @@ jobs:
     - name: Run M2-ISA-R
       run: |
         source .venv/bin/activate
-        coredsl2_parser etiss_arch_riscv/top.core_desc
-        etiss_writer etiss_arch_riscv/gen_model/top.m2isarmodel --static-scalars --separate
+        python -m m2isar.frontends.coredsl2.parser etiss_arch_riscv/top.core_desc
+        python -m m2isar.backends.etiss.writer etiss_arch_riscv/gen_model/top.m2isarmodel --static-scalars --separate
+        # coredsl2_parser etiss_arch_riscv/top.core_desc
+        # etiss_writer etiss_arch_riscv/gen_model/top.m2isarmodel --static-scalars --separate
         cp -r etiss_arch_riscv/gen_output/* etiss/ArchImpl/
     - name: Setup ETISS
       run: |
