@@ -50,11 +50,6 @@ jobs:
       # TODO: custom build + rvv + clang as alternative?
       run: |
         sudo apt install -y gcc-riscv64-unknown-elf
-      run: |
-        cd etiss
-        mkdir build
-        cmake -DCMAKE_BUILD_TYPE=Debug -B build/
-        cmake --build -B build/
     - name: Setup M2-ISA-R
       run: |
         source .venv/bin/activate
