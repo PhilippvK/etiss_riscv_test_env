@@ -105,4 +105,4 @@ jobs:
       if: ${{ always() }}
       with:
         name: result
-        path: etiss_riscv_tests/
+        path: results_*
