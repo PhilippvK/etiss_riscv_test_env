@@ -86,6 +86,7 @@ jobs:
         make XLEN=64 isa -j `nproc`
     - name: Setup etiss_riscv_tests
       run: |
+        sudo apt install -y gdb
         source .venv/bin/activate
         cd etiss_riscv_tests
         pip install -r requirements.txt
