@@ -67,6 +67,7 @@ jobs:
     - name: Setup ETISS
       run: |
         cd etiss
+        sudo apt install -y g++ libboost-system-dev libboost-filesystem-dev libboost-program-options-dev graphviz doxygen libtinfo-dev zlib1g-dev texinfo
         mkdir build
         cmake -DCMAKE_BUILD_TYPE=Debug -B build/
         cmake --build -B build/
