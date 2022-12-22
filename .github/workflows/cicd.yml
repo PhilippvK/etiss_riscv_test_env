@@ -82,10 +82,11 @@ jobs:
         source .venv/bin/activate
         cd etiss_riscv_tests
         pip install -r requirements.txt
-          - id: string
-        uses: ASzc/change-string-case-action@v1
-        with:
-          string: ${{ matrix.exts }}
+    - name: Setup etiss_riscv_tests
+      id: string
+      uses: ASzc/change-string-case-action@v1
+      with:
+        string: ${{ matrix.exts }}
     - name: Run etiss_riscv_tests
       continue-on-error: true
       run: |
