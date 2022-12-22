@@ -54,7 +54,7 @@ jobs:
           cd /tmp/
           wget https://static.dev.sifive.com/dev-tools/freedom-tools/v2020.12/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz
           mkdir -p /opt/riscv/
-          tar xvf riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz --strip-components 1 -C /opt/riscv
+          tar xvf riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz --strip-components=1 -C /opt/riscv
           echo "/opt/riscv/bin/" >> $GITHUB_PATH
           cd -
     - name: Setup M2-ISA-R
