@@ -70,13 +70,13 @@ jobs:
         sudo apt install -y g++ libboost-system-dev libboost-filesystem-dev libboost-program-options-dev graphviz doxygen libtinfo-dev zlib1g-dev texinfo
         mkdir build
         cmake -DCMAKE_BUILD_TYPE=Debug -B build/
-        cmake --build build/
+        cmake --build build/ -j `nproc`
     - name: Setup riscv-tests
       run: |
         cd riscv-tests
         autoconf
         ./configure
-        make XLEN=${{ matrix.python-version }} isa
+        make XLEN=${{ matrix.python-version }} isa -j `nproc`
     - name: Setup etiss_riscv_tests
       run: |
         source .venv/bin/activate
