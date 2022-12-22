@@ -27,12 +27,10 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.8"]
-        # xlen: [32, 64]
-        xlen: [64]
+        xlen: [32, 64]
         exts: ["IMACFD"]
         jit: ["tcc"]
         # jit: ["tcc", "gcc", "llvm"]
-        # xlen: [32, 64]
         # etiss-arch: ["RV32IMACFD", "RV64IMACFD"]
     steps:
     - name: Clone wrapper repo
@@ -84,7 +82,7 @@ jobs:
         autoconf
         ./configure
         # make XLEN=${{ matrix.python-version }} isa -j `nproc`
-        make XLEN=64 isa -j `nproc`
+        make RISCV_PREFIX=riscv64-unknown-elf- XLEN=${{ matrix.xlen }} isa -j `nproc`
     - name: Setup etiss_riscv_tests
       run: |
         sudo apt install -y gdb
@@ -101,7 +99,7 @@ jobs:
       run: |
         source .venv/bin/activate
         # etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}-${{ matrix.exts }} --bits ${{ matrix.xlen }}  --ext ${{ steps.string.outputs.lowercase }} --virt p v --timeout 10 --jit ${{ matrix.jit }} riscv-tests/isa etiss/build/bin/bare_etiss_processor
-        python etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}${{ matrix.exts }} --bits ${{ matrix.xlen }} --ext ${{ steps.string.outputs.lowercase }} --virt p --timeout 10 --jit ${{ matrix.jit }} riscv-tests/isa etiss/build/bin/bare_etiss_processor
+        python etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}${{ matrix.exts }} --bits ${{ matrix.xlen }} --ext ${{ steps.string.outputs.lowercase }} --virt pv --timeout 10 --jit ${{ matrix.jit }} riscv-tests/isa etiss/build/bin/bare_etiss_processor
     - name: Archive files
       uses: actions/upload-artifact@v2
       if: ${{ always() }}
