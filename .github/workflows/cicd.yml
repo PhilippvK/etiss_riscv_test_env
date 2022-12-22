@@ -96,12 +96,14 @@ jobs:
       with:
         string: ${{ matrix.exts }}
     - name: Run etiss_riscv_tests
-      continue-on-error: true
+      # continue-on-error: true
       run: |
         source .venv/bin/activate
-        etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}-${{ matrix.exts }} --bits ${{ matrix.xlen }}  --ext ${{ steps.string.outputs.lowercase }} --virt p --timeout 10 --jit ${{ matrix.jit }} riscv-tests/isa etiss/build/bin/bare_etiss_processor
+        # etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}-${{ matrix.exts }} --bits ${{ matrix.xlen }}  --ext ${{ steps.string.outputs.lowercase }} --virt p v --timeout 10 --jit ${{ matrix.jit }} riscv-tests/isa etiss/build/bin/bare_etiss_processor
+        etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}-${{ matrix.exts }} --bits 32 64  --ext ${{ steps.string.outputs.lowercase }} --virt p v --timeout 10 --jit ${{ matrix.jit }} riscv-tests/isa etiss/build/bin/bare_etiss_processor
     - name: Archive files
       uses: actions/upload-artifact@v2
+      if: ${{ always() }}
       with:
         name: result
         path: etiss_riscv_tests/
