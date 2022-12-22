@@ -50,7 +50,12 @@ jobs:
     - name: Get riscv-gcc
       # TODO: custom build + rvv + clang as alternative?
       run: |
-        sudo apt install -y gcc-riscv64-unknown-elf
+          # sudo apt install -y gcc-riscv64-unknown-elf
+          cd /tmp/
+          wget
+          mkdir -p /opt/riscv/
+          tar xvf --strip-components 1 -C /opt/riscv
+          echo "/opt/riscv/bin/" >> $GITHUB_PATH
     - name: Setup M2-ISA-R
       run: |
         source .venv/bin/activate
@@ -76,7 +81,8 @@ jobs:
         cd riscv-tests
         autoconf
         ./configure
-        make XLEN=${{ matrix.python-version }} isa -j `nproc`
+        # make XLEN=${{ matrix.python-version }} isa -j `nproc`
+        make XLEN=64 isa -j `nproc`
     - name: Setup etiss_riscv_tests
       run: |
         source .venv/bin/activate
