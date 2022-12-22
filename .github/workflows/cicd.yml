@@ -104,5 +104,5 @@ jobs:
       uses: actions/upload-artifact@v3
       if: ${{ always() }}
       with:
-        name: result
+        name: result-rv${{ matrix.xlen }}${{ steps.string.outputs.lowercase }}-${{ matrix.jit }}
         path: results_*
