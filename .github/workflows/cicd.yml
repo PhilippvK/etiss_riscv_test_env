@@ -70,7 +70,7 @@ jobs:
         sudo apt install -y g++ libboost-system-dev libboost-filesystem-dev libboost-program-options-dev graphviz doxygen libtinfo-dev zlib1g-dev texinfo
         mkdir build
         cmake -DCMAKE_BUILD_TYPE=Debug -B build/
-        cmake --build -B build/
+        cmake --build build/
     - name: Setup riscv-tests
       run: |
         cd riscv-tests
