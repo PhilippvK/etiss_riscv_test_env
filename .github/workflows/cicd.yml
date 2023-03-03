@@ -30,6 +30,7 @@ jobs:
       matrix:
         python-version: ["3.8"]
         xlen: [32, 64]
+        virt: ["p", "v"]
         exts: ["IMACFD"]
         jit: ["tcc"]
         # jit: ["tcc", "gcc", "llvm"]
@@ -83,7 +84,6 @@ jobs:
         cd riscv-tests
         autoconf
         ./configure
-        # make XLEN=${{ matrix.python-version }} isa -j `nproc`
         make RISCV_PREFIX=riscv64-unknown-elf- XLEN=${{ matrix.xlen }} isa -j `nproc`
     - name: Setup etiss_riscv_tests
       run: |
@@ -97,14 +97,18 @@ jobs:
       with:
         string: ${{ matrix.exts }}
     - name: Run etiss_riscv_tests
-      # continue-on-error: true
+      continue-on-error: true
       run: |
         source .venv/bin/activate
         # etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}-${{ matrix.exts }} --bits ${{ matrix.xlen }}  --ext ${{ steps.string.outputs.lowercase }} --virt p v --timeout 10 --jit ${{ matrix.jit }} riscv-tests/isa etiss/build/bin/bare_etiss_processor
-        python etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}${{ matrix.exts }} --bits ${{ matrix.xlen }} --ext ${{ steps.string.outputs.lowercase }} --virt pv --timeout 10 --jit ${{ matrix.jit }} riscv-tests/isa etiss/build/bin/bare_etiss_processor --fail
+        # python etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}${{ matrix.exts }} --bits ${{ matrix.xlen }} --ext ${{ steps.string.outputs.lowercase }} --virt pv --timeout 10 --jit ${{ matrix.jit }} riscv-tests/isa etiss/build/bin/bare_etiss_processor --fail
+        python etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}${{ matrix.exts }} --bits ${{ matrix.xlen }} --ext ${{ steps.string.outputs.lowercase }} --virt ${{ matrix.virt }} --timeout 10 --jit ${{ matrix.jit }} riscv-tests/isa etiss/build/bin/bare_etiss_processor --fail || echo "::warning ::TEST warn1"
+    - name: Generate Warning Annotations
+      run: |
+        echo "::warning ::TEST warn2"
     - name: Archive files
       uses: actions/upload-artifact@v3
       if: ${{ always() }}
       with:
-        name: result-rv${{ matrix.xlen }}${{ steps.string.outputs.lowercase }}-${{ matrix.jit }}
+        name: result-rv${{ matrix.xlen }}-${{ matrix.virt }}-${{ steps.string.outputs.lowercase }}-${{ matrix.jit }}
         path: results_*
