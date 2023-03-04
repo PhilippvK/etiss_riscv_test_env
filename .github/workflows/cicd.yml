@@ -32,8 +32,7 @@ jobs:
         xlen: [32, 64]
         virt: ["p", "v"]
         exts: ["IMACFD"]
-        jit: ["tcc"]
-        # jit: ["tcc", "gcc", "llvm"]
+        jit: ["tcc", "gcc", "llvm"]
         # etiss-arch: ["RV32IMACFD", "RV64IMACFD"]
     steps:
     - name: Clone wrapper repo
