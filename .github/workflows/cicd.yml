@@ -22,6 +22,7 @@ on:
     branches:
       - main
       - coredsl_exceptions
+      - xcorev
   workflow_dispatch:
 
 jobs:
@@ -32,7 +33,7 @@ jobs:
         python-version: ["3.8"]
         xlen: [32, 64]
         virt: ["p", "v"]
-        exts: ["IMACFD"]
+        exts: ["IMACXCorev", "IMACFDXCorev"]
         jit: ["tcc", "gcc", "llvm"]
         # etiss-arch: ["RV32IMACFD", "RV64IMACFD"]
     steps:
@@ -50,6 +51,7 @@ jobs:
         python -m venv .venv
         pip install --upgrade pip setuptools wheel
     - name: Get riscv-gcc
+      # TODO: use corev gcc
       # TODO: custom build + rvv + clang as alternative?
       run: |
           # sudo apt install -y gcc-riscv64-unknown-elf
@@ -92,6 +94,7 @@ jobs:
         source .venv/bin/activate
         cd etiss_riscv_tests
         pip install -r requirements.txt
+        # TODO: add Xcorev specific tests
     - name: Setup etiss_riscv_tests
       id: string
       uses: ASzc/change-string-case-action@v5
