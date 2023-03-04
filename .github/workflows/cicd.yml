@@ -21,6 +21,7 @@ on:
   push:
     branches:
       - main
+      - coredsl_exceptions
   workflow_dispatch:
 
 jobs:
