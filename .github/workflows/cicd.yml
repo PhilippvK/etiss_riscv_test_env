@@ -70,9 +70,7 @@ jobs:
         python -m m2isar.backends.etiss.writer etiss_arch_riscv/gen_model/top.m2isarmodel --static-scalars --separate
         # coredsl2_parser etiss_arch_riscv/top.core_desc
         # etiss_writer etiss_arch_riscv/gen_model/top.m2isarmodel --static-scalars --separate
-        ls etiss_arch_riscv/gen_output/
         cp -r etiss_arch_riscv/gen_output/top/* etiss/ArchImpl/
-        ls etiss/ArchImpl
         grep -qF -- "ADD_SUBDIRECTORY(RV${{ matrix.xlen }}${{ matrix.exts }})" etiss/ArchImpl/CMakeLists.txt || echo "ADD_SUBDIRECTORY(RV${{ matrix.xlen }}${{ matrix.exts }})" >> etiss/ArchImpl/CMakeLists.txt
     - name: Setup ETISS
       run: |
