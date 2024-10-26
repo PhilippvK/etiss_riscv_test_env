@@ -50,7 +50,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip virtualenv
         python -m venv .venv
-        pip install --upgrade pip setuptools wheel
+        source .venv/bin/activate
         pip install -r requirements.txt
     - name: Get riscv-gcc
       # TODO: custom build + rvv + clang as alternative?
@@ -95,7 +95,7 @@ jobs:
         source .venv/bin/activate
         cd etiss_riscv_tests
         pip install -r requirements.txt
-    - name: Setup etiss_riscv_tests
+    - name: Upper string case
       id: string
       uses: ASzc/change-string-case-action@v5
       with:
