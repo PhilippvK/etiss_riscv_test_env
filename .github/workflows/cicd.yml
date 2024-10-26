@@ -39,11 +39,11 @@ jobs:
         # etiss-arch: ["RV32IMACFD", "RV64IMACFD"]
     steps:
     - name: Clone wrapper repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: recursive
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: Initialize Virtualenv
@@ -97,7 +97,7 @@ jobs:
         pip install -r requirements.txt
     - name: Upper string case
       id: string
-      uses: ASzc/change-string-case-action@v5
+      uses: ASzc/change-string-case-action@v6
       with:
         string: ${{ matrix.exts }}
     - name: Run etiss_riscv_tests
@@ -110,7 +110,7 @@ jobs:
         python3 gen_summary.py results_* --etiss-dir etiss --etiss-arch-riscv-dir etiss_arch_riscv --m2isar-dir M2-ISA-R --riscv-tests-dir riscv-tests >> $GITHUB_STEP_SUMMARY
         python3 gen_messages.py results_*
     - name: Archive files
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ always() }}
       with:
         name: result-rv${{ matrix.xlen }}-${{ matrix.virt }}-${{ steps.string.outputs.lowercase }}-${{ matrix.jit }}
@@ -121,9 +121,9 @@ jobs:
     needs: test
     steps:
     - name: Clone wrapper repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Download reports' artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
     - name: Check downloaded files
       run: |
         ls -l
