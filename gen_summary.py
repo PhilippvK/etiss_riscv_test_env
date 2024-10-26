@@ -40,12 +40,15 @@ if args.etiss_arch_riscv_dir:
 if args.m2isar_dir:
     repo = git.Repo(args.m2isar_dir)
     m2isar_ref = repo.head.commit.hexsha
+    m2isar_url = repo.remotes.origin.url.replace(".git", "")
 if args.etiss_dir:
     repo = git.Repo(args.etiss_dir)
     etiss_ref = repo.head.commit.hexsha
+    etiss_url = repo.remotes.origin.url.replace(".git", "")
 if args.riscv_tests_dir:
     repo = git.Repo(args.riscv_tests_dir)
     riscv_tests_ref = repo.head.commit.hexsha
+    riscv_tests_url = repo.remotes.origin.url.replace(".git", "")
 
 print("## Test Report")
 print()
@@ -58,9 +61,9 @@ print()
 print("**Commits:**")
 print()
 print("`etiss_arch_riscv`:", f"[`{etiss_arch_riscv_ref}`]({etiss_arch_riscv_url}/commit/{etiss_arch_riscv_ref})")
-print("`M2-ISA-R`", m2isar_ref)
-print("`etiss`:", etiss_ref)
-print("`riscv-tests`:", riscv_tests_ref)
+print("`M2-ISA-R`", f"[`{m2isar_ref}`]({m2isar_url}/commit/{m2isar_ref})")
+print("`etiss`:", f"[`{etiss_ref}`]({etiss_url}/commit/{etiss_ref})")
+print("`riscv-tests`:", f"[`{riscv_tests_ref}`]({riscv_tests_url}/commit/{riscv_tests_ref})")
 print()
 print("### Details")
 print()
