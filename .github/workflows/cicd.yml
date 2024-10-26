@@ -51,6 +51,7 @@ jobs:
         python -m pip install --upgrade pip virtualenv
         python -m venv .venv
         pip install --upgrade pip setuptools wheel
+        pip install -r requirements.txt
     - name: Get riscv-gcc
       # TODO: custom build + rvv + clang as alternative?
       run: |
@@ -106,11 +107,23 @@ jobs:
         # etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}-${{ matrix.exts }} --bits ${{ matrix.xlen }}  --ext ${{ steps.string.outputs.lowercase }} --virt p v --timeout 10 --jit ${{ matrix.jit }} riscv-tests/isa etiss/build/bin/bare_etiss_processor
         # python etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}${{ matrix.exts }} --bits ${{ matrix.xlen }} --ext ${{ steps.string.outputs.lowercase }} --virt pv --timeout 10 --jit ${{ matrix.jit }} riscv-tests/isa etiss/build/bin/bare_etiss_processor --fail
         python etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}${{ matrix.exts }} --bits ${{ matrix.xlen }} --ext ${{ steps.string.outputs.lowercase }} --virt ${{ matrix.virt }} --timeout 10 --jit ${{ matrix.jit }} riscv-tests/isa etiss/build/bin/bare_etiss_processor --fail && FAILED=0 || FAILED=1
-        test $FAILED -eq 0 || echo "::warning ::TEST Failed Intruction tests!"
-        echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
+        python3 gen_summary.py results_* --etiss-dir etiss --etiss-arch-riscv-dir etiss_arch_riscv --m2isar-dir M2-ISA-R --riscv-tests-dir riscv-tests >> $GITHUB_STEP_SUMMARY
+        python3 gen_messages.py results_*
     - name: Archive files
       uses: actions/upload-artifact@v3
       if: ${{ always() }}
       with:
         name: result-rv${{ matrix.xlen }}-${{ matrix.virt }}-${{ steps.string.outputs.lowercase }}-${{ matrix.jit }}
         path: results_*
+
+
+  merge:
+    runs-on: ubuntu-latest
+    needs: test
+    - name: Clone wrapper repo
+      uses: actions/checkout@v3
+    - name: Download reports' artifacts
+      uses: actions/download-artifact@v3
+    - name: Check downloaded files
+      run: |
+        ls -l
