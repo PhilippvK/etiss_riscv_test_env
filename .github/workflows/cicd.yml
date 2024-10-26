@@ -15,7 +15,7 @@
 ##
 
 # GitHub CI build pipeline
-name: CI build
+name: Run ETISS RISC-V Tests
 
 on:
   push:
@@ -24,7 +24,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -116,10 +116,10 @@ jobs:
         name: result-rv${{ matrix.xlen }}-${{ matrix.virt }}-${{ steps.string.outputs.lowercase }}-${{ matrix.jit }}
         path: results_*
 
-
   merge:
     runs-on: ubuntu-latest
     needs: test
+    steps:
     - name: Clone wrapper repo
       uses: actions/checkout@v3
     - name: Download reports' artifacts
