@@ -13,9 +13,9 @@ args = parser.parse_args()
 
 directory = Path(args.directory)
 
-with open(directory / "fail", "r") as f:
+with open(directory / "fail.txt", "r") as f:
     fail_content = f.readlines()
-with open(directory / "pass", "r") as f:
+with open(directory / "pass.txt", "r") as f:
     pass_content = f.readlines()
 
 pass_content = [line.strip() for line in pass_content if len(line.strip()) > 0]
