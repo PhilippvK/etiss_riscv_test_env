@@ -28,7 +28,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8"]
+        python-version: ["3.10"]
+        patch_etiss: [false, true]
         xlen: [32, 64]
         # xlen: [32]
         # virt: ["p", "v"]
@@ -63,20 +64,24 @@ jobs:
           tar xvf riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz --strip-components=1 -C /opt/riscv
           echo "/opt/riscv/bin/" >> $GITHUB_PATH
           cd -
-    # - name: Setup M2-ISA-R
-    #   run: |
-    #     source .venv/bin/activate
-    #     cd M2-ISA-R
-    #     pip install -e .
-    # - name: Run M2-ISA-R
-    #   run: |
-    #     source .venv/bin/activate
-    #     python -m m2isar.frontends.coredsl2.parser etiss_arch_riscv/top.core_desc
-    #     python -m m2isar.backends.etiss.writer etiss_arch_riscv/gen_model/top.m2isarmodel --static-scalars --separate
-    #     # coredsl2_parser etiss_arch_riscv/top.core_desc
-    #     # etiss_writer etiss_arch_riscv/gen_model/top.m2isarmodel --static-scalars --separate
-    #     cp -r etiss_arch_riscv/gen_output/top/* etiss/ArchImpl/
-    #     grep -qF -- "ADD_SUBDIRECTORY(RV${{ matrix.xlen }}${{ matrix.exts }})" etiss/ArchImpl/CMakeLists.txt || echo "ADD_SUBDIRECTORY(RV${{ matrix.xlen }}${{ matrix.exts }})" >> etiss/ArchImpl/CMakeLists.txt
+    # TODO: make this step optional
+    - name: Setup M2-ISA-R
+      if: ${{ matrix.patch_etiss }}
+      run: |
+        source .venv/bin/activate
+        cd M2-ISA-R
+        pip install -r requirements.txt
+    - name: Run M2-ISA-R
+      if: ${{ matrix.patch_etiss }}
+      run: |
+        source .venv/bin/activate
+        export PYTHONPATH=$(pwd)/M2-ISA-R:$PYTHONPATH
+        python -m m2isar.frontends.coredsl2.parser etiss_arch_riscv/top.core_desc
+        python -m m2isar.backends.etiss.writer etiss_arch_riscv/gen_model/top.m2isarmodel --static-scalars --separate
+        cp -r etiss_arch_riscv/gen_output/top/* etiss/ArchImpl/
+        cd etiss
+        git restore ArchImpl/RV${{ matrix.xlen }}${{ matrix.exts }}/RV${{ matrix.xlen }}${{ matrix.exts }}ArchSpecificImp.cpp
+
     - name: Setup ETISS
       run: |
         cd etiss
@@ -110,14 +115,14 @@ jobs:
         source .venv/bin/activate
         # etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}-${{ matrix.exts }} --bits ${{ matrix.xlen }}  --ext ${{ steps.string.outputs.lowercase }} --virt p v --timeout 10 --jit ${{ matrix.jit }} riscv-tests/isa etiss/build/bin/bare_etiss_processor
         # python etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}${{ matrix.exts }} --bits ${{ matrix.xlen }} --ext ${{ steps.string.outputs.lowercase }} --virt pv --timeout 10 --jit ${{ matrix.jit }} riscv-tests/isa etiss/build/bin/bare_etiss_processor --fail
-        python etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}${{ matrix.exts }} --bits ${{ matrix.xlen }} --ext ${{ steps.string.outputs.lowercase }} --virt ${{ matrix.virt }} --timeout 10 --jit ${{ matrix.jit }} --runlevel ${{ matrix.runlevel }} riscv-tests/isa etiss/build/bin/bare_etiss_processor  && FAILED=0 || FAILED=1
+        python etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}${{ matrix.exts }} --bits ${{ matrix.xlen }} --ext ${{ steps.string.outputs.lowercase }} --virt ${{ matrix.virt }} --timeout 10 --jit ${{ matrix.jit }} --runlevel ${{ matrix.runlevel }} --keep-output both riscv-tests/isa etiss/build/bin/bare_etiss_processor
         python3 gen_summary.py results_* --etiss-dir etiss --etiss-arch-riscv-dir etiss_arch_riscv --m2isar-dir M2-ISA-R --riscv-tests-dir riscv-tests >> $GITHUB_STEP_SUMMARY
-        python3 gen_messages.py results_*
+        python3 gen_messages.py results_* --print-passed --allow-fail
     - name: Archive files
       uses: actions/upload-artifact@v4
       if: ${{ always() }}
       with:
-        name: result-rv${{ matrix.xlen }}-${{ matrix.virt }}-${{ steps.string.outputs.lowercase }}-${{ matrix.jit }}-${{ matrix.runlevel }}
+        name: result-rv${{ matrix.xlen }}-${{ matrix.virt }}-${{ steps.string.outputs.lowercase }}-${{ matrix.jit }}-${{ matrix.runlevel }}-${{ matrix.patch_etiss }}
         path: results_*
 
   merge:
