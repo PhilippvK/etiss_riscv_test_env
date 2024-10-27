@@ -25,7 +25,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-20  # needs llvm 11 pkg
+    runs-on: ubuntu-20.04  # needs llvm 11 pkg
     strategy:
       fail-fast: false
       matrix:
