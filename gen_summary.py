@@ -21,8 +21,8 @@ with open(directory / "pass.txt", "r") as f:
 pass_content = [line.strip() for line in pass_content if len(line.strip()) > 0]
 fail_content = [line.strip() for line in fail_content if len(line.strip()) > 0]
 
-err_content = [line for line in fail_content if "etiss error" in line]
-fail_content = [line for line in fail_content if "etiss error" not in line]
+err_content = [line for line in fail_content if "etiss error" in line or "timeout" in line]
+fail_content = [line for line in fail_content if "etiss error" not in line and "timeout" not in line]
 
 num_pass = len(pass_content)
 num_err = len(err_content)
