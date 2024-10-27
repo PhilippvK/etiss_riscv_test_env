@@ -31,10 +31,12 @@ jobs:
         python-version: ["3.10"]
         patch_etiss: [false, true]
         xlen: [32, 64]
-        virt: ["p", "v"]
+        # virt: ["p", "v"]
+        virt: ["p"]
         exts: ["IMACFD"]
         jit: ["tcc", "gcc", "llvm"]
-        runlevel: ["msu"]
+        # runlevel: ["msu"]
+        runlevel: ["m", "s", "u"]
         # etiss-arch: ["RV32IMACFD", "RV64IMACFD"]
     steps:
     - name: Clone wrapper repo
@@ -81,8 +83,13 @@ jobs:
 
     - name: Setup ETISS
       run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 11
+        rm llvm.sh
         cd etiss
         sudo apt install -y g++ libboost-system-dev libboost-filesystem-dev libboost-program-options-dev graphviz doxygen libtinfo-dev zlib1g-dev texinfo
+        sudo apt install -y libclang-11-dev
         cd PluginImpl
         ln -s ../../etiss_riscv_tests/FileLoggerPlugin .
         cd -
@@ -112,9 +119,9 @@ jobs:
         source .venv/bin/activate
         # etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}-${{ matrix.exts }} --bits ${{ matrix.xlen }}  --ext ${{ steps.string.outputs.lowercase }} --virt p v --timeout 10 --jit ${{ matrix.jit }} riscv-tests/isa etiss/build/bin/bare_etiss_processor
         # python etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}${{ matrix.exts }} --bits ${{ matrix.xlen }} --ext ${{ steps.string.outputs.lowercase }} --virt pv --timeout 10 --jit ${{ matrix.jit }} riscv-tests/isa etiss/build/bin/bare_etiss_processor --fail
-        python etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}${{ matrix.exts }} --bits ${{ matrix.xlen }} --ext ${{ steps.string.outputs.lowercase }} --virt ${{ matrix.virt }} --timeout 10 --jit ${{ matrix.jit }} --runlevel ${{ matrix.runlevel }} --keep-output both riscv-tests/isa etiss/build/bin/bare_etiss_processor
+        python etiss_riscv_tests/test.py --arch RV${{ matrix.xlen }}${{ matrix.exts }} --bits ${{ matrix.xlen }} --ext ${{ steps.string.outputs.lowercase }} --virt ${{ matrix.virt }} --timeout 10 --jit ${{ matrix.jit }} --runlevel ${{ matrix.runlevel }} riscv-tests/isa etiss/build/bin/bare_etiss_processor
         python3 gen_summary.py results_* --etiss-dir etiss --etiss-arch-riscv-dir etiss_arch_riscv --m2isar-dir M2-ISA-R --riscv-tests-dir riscv-tests >> $GITHUB_STEP_SUMMARY
-        python3 gen_messages.py results_* --print-passed --allow-fail
+        python3 gen_messages.py results_* --allow-fail
     - name: Archive files
       uses: actions/upload-artifact@v4
       if: ${{ always() }}

@@ -7,6 +7,7 @@ parser.add_argument("directory")
 parser.add_argument("--print-passed", action="store_true")
 parser.add_argument("--allow-empty", action="store_true")
 parser.add_argument("--allow-fail", action="store_true")
+parser.add_argument("--allow-err", action="store_true")
 
 args = parser.parse_args()
 
@@ -20,8 +21,8 @@ with open(directory / "pass.txt", "r") as f:
 pass_content = [line.strip() for line in pass_content if len(line.strip()) > 0]
 fail_content = [line.strip() for line in fail_content if len(line.strip()) > 0]
 
-err_content = [line for line in fail_content if "etiss error" in line]
-fail_content = [line for line in fail_content if "etiss error" not in line]
+err_content = [line for line in fail_content if "etiss error" in line or "timeout" in line]
+fail_content = [line for line in fail_content if "etiss error" not in line and "timeout" not in line]
 
 num_pass = len(pass_content)
 num_err = len(err_content)
@@ -39,6 +40,9 @@ if num_pass > 0 and args.print_passed:
 
 if num_pass + num_fail + num_err == 0:
     assert args.allow_empty, "No test results found"
+
+if num_err > 0:
+    assert args.allow_err, "Crashing tests not allowed"
 
 if num_fail > 0:
     assert args.allow_fail, "Failing tests not allowed"
