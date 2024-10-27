@@ -71,41 +71,45 @@ print("`riscv-tests`:", f"[`{riscv_tests_ref}`]({riscv_tests_url}/commit/{riscv_
 print()
 print("### Details")
 print()
-print("**Error :exclamation::**")
-print()
-if num_err > 5:
-    print("<details>")
-    print(f"<summary>Click to view {num_err} tests</summary>")
+if num_err > 0:
+    print("**Error :exclamation::**")
     print()
-print("```")
-print("\n".join(err_content))
-print("```")
-if num_err > 5:
+    if num_err > 5:
+        print("<details>")
+        print(f"<summary>Click to view {num_err} tests</summary>")
+        print()
+    print("```")
+    print("\n".join(err_content))
+    print("```")
+    if num_err > 5:
+        print()
+        print("</details>")
     print()
-    print("</details>")
-print()
-print("**Fail :x: :**")
-print()
-if num_fail > 5:
-    print("<details>")
-    print(f"<summary>Click to view {num_fail} tests</summary>")
+if num_fail > 0:
+    print("**Fail :x: :**")
     print()
-print("```")
-print("\n".join(fail_content))
-print("```")
-if num_fail > 5:
+    if num_fail > 5:
+        print("<details>")
+        print(f"<summary>Click to view {num_fail} tests</summary>")
+        print()
+    print("```")
+    print("\n".join(fail_content))
+    print("```")
+    if num_fail > 5:
+        print()
+        print("</details>")
     print()
-    print("</details>")
-print()
-print("**Pass :white_check_mark: :**")
-print()
-if num_pass > 5:
-    print("<details>")
-    print(f"<summary>Click to view {num_pass} tests</summary>")
+if num_pass > 0:
+    print("**Pass :white_check_mark: :**")
     print()
-print("```")
-print("\n".join(pass_content))
-print("```")
-if num_pass > 5:
+    if num_pass > 5:
+        print("<details>")
+        print(f"<summary>Click to view {num_pass} tests</summary>")
+        print()
+    print("```")
+    print("\n".join(pass_content))
+    print("```")
+    if num_pass > 5:
+        print()
+        print("</details>")
     print()
-    print("</details>")
