@@ -29,9 +29,13 @@ num_err = len(err_content)
 num_fail = len(fail_content)
 
 etiss_arch_riscv_ref = "?"
+etiss_arch_riscv_url = ""
 m2isar_ref = "?"
+m2isar_url = ""
 etiss_ref = "?"
+etiss_url = ""
 riscv_tests_ref = "?"
+riscv_tests_url = ""
 
 if args.etiss_arch_riscv_dir:
     repo = git.Repo(args.etiss_arch_riscv_dir)
@@ -69,18 +73,33 @@ print("### Details")
 print()
 print("**Error :exclamation::**")
 print()
+if num_err > 5:
+    print("<details>")
+    print(f"<summary>Click to view {num_err} tests</summary>")
 print("```")
 print("\n".join(err_content))
 print("```")
+if num_err > 5:
+    print("</details>")
 print()
 print("**Fail :x: :**")
 print()
+if num_fail > 5:
+    print("<details>")
+    print(f"<summary>Click to view {num_fail} tests</summary>")
 print("```")
 print("\n".join(fail_content))
 print("```")
+if num_fail > 5:
+    print("</details>")
 print()
 print("**Pass :white_check_mark: :**")
 print()
+if num_pass > 5:
+    print("<details>")
+    print(f"<summary>Click to view {num_pass} tests</summary>")
 print("```")
 print("\n".join(pass_content))
 print("```")
+if num_pass > 5:
+    print("</details>")
