@@ -57,7 +57,7 @@ jobs:
         cd M2-ISA-R/m2isar/backends/isa_manual
         npm install
         ./node_modules/.bin/datasheet -i M2-ISA-R/out.adoc -o manual.pdf
-
+    - name: Update Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: isa-manual
