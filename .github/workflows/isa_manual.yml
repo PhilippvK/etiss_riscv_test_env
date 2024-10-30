@@ -51,7 +51,7 @@ jobs:
         source .venv/bin/activate
         export PYTHONPATH=$(pwd)/M2-ISA-R:$PYTHONPATH
         python -m m2isar.frontends.coredsl2.parser etiss_arch_riscv/top.core_desc
-        python -m m2isar.backends.isa_manual.writer etiss_arch_riscv/gen_model/top.m2isarmodel --output manual.adoc
+        python -m m2isar.backends.isa_manual.writer etiss_arch_riscv/gen_model/top.m2isarmodel --output M2-ISA-R/m2isar/backends/isa_manual/manual.adoc
     - name: Generate Datasheet
       run: |
         cd M2-ISA-R/m2isar/backends/isa_manual
@@ -62,6 +62,6 @@ jobs:
       with:
         name: isa-manual
         path: |
-          *.adoc
-          *.pdf
-          *.html
+          M2-ISA-R/m2isar/backends/isa_manual/*.adoc
+          M2-ISA-R/m2isar/backends/isa_manual/*.pdf
+          M2-ISA-R/m2isar/backends/isa_manual/*.html
