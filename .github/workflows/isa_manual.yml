@@ -42,20 +42,17 @@ jobs:
         source .venv/bin/activate
         pip install -r requirements.txt
     - name: Setup M2-ISA-R
-      if: ${{ matrix.patch_etiss }}
       run: |
         source .venv/bin/activate
         cd M2-ISA-R
         pip install -r requirements.txt
     - name: Run M2-ISA-R
-      if: ${{ matrix.patch_etiss }}
       run: |
         source .venv/bin/activate
         export PYTHONPATH=$(pwd)/M2-ISA-R:$PYTHONPATH
         python -m m2isar.frontends.coredsl2.parser etiss_arch_riscv/top.core_desc
         python -m m2isar.backends.isa_manual.writer etiss_arch_riscv/gen_model/top.m2isarmodel --output M2-ISA-R/m2isar/backends/isa_manual/out.adoc
     - name: Generate Datasheet
-      if: ${{ matrix.patch_etiss }}
       run: |
         cd M2-ISA-R/m2isar/backends/isa_manual
         npm install
