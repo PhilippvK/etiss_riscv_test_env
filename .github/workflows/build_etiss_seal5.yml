@@ -113,7 +113,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: patched_etiss
-        github-token: ${{ secrets.REPO_ACCESS_TOKEN }}
+        github-token: ${{ secrets.SEAL5_ACCESS_TOKEN }}
         path: etiss_source
 
     - name: CMake config
@@ -137,7 +137,7 @@ jobs:
     - name: Send ETISS RUN-ID to Seal5
       uses: peter-evans/repository-dispatch@v3
       with:
-         token: ${{ secrets.REPO_ACCESS_TOKEN }}
+         token: ${{ secrets.SEAL5_ACCESS_TOKEN }}
          repository: 'tum-ei-eda/seal5'
          event-type: etiss-event
          client-payload: '{"parent_repo_run-id": "${{ github.event.client_payload.run_id }}", "etiss_run_id": "${{ github.run_id }}"}'
