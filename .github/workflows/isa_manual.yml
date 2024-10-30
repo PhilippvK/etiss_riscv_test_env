@@ -51,16 +51,17 @@ jobs:
         source .venv/bin/activate
         export PYTHONPATH=$(pwd)/M2-ISA-R:$PYTHONPATH
         python -m m2isar.frontends.coredsl2.parser etiss_arch_riscv/top.core_desc
-        python -m m2isar.backends.isa_manual.writer etiss_arch_riscv/gen_model/top.m2isarmodel --output M2-ISA-R/m2isar/backends/isa_manual/out.adoc
+        python -m m2isar.backends.isa_manual.writer etiss_arch_riscv/gen_model/top.m2isarmodel --output manual.adoc
     - name: Generate Datasheet
       run: |
         cd M2-ISA-R/m2isar/backends/isa_manual
         npm install
-        ./node_modules/.bin/datasheet -i M2-ISA-R/out.adoc -o manual.pdf
+        ./node_modules/.bin/datasheet -i manual.adoc -o manual.pdf
     - name: Update Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: isa-manual
         path: |
-          M2-ISA-R/m2isar/backends/isa_manual/*.pdf
-          M2-ISA-R/m2isar/backends/isa_manual/*.html
+          *.adoc
+          *.pdf
+          *.html
