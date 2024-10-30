@@ -9,7 +9,8 @@
 	url = https://github.com/riscv-software-src/riscv-tests.git
 [submodule "M2-ISA-R"]
 	path = M2-ISA-R
-	url = https://github.com/tum-ei-eda/M2-ISA-R.git
+	# url = https://github.com/tum-ei-eda/M2-ISA-R.git
+	url = https://github.com/PhilippvK/M2-ISA-R.git
 [submodule "etiss_arch_riscv"]
 	path = etiss_arch_riscv
 	url = https://github.com/tum-ei-eda/etiss_arch_riscv.git
