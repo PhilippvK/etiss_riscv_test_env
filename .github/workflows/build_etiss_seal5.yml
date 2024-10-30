@@ -1,6 +1,7 @@
 name: Build ETISS for Custom Instructions
 
 on:
+  workflow_dispatch:
   repository_dispatch:
     types: [s4e-cdsl-event, seal5-event, etiss-event]
   push:
