@@ -24,7 +24,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  render:
     runs-on: ubuntu-latest
     steps:
     - name: Clone wrapper repo
