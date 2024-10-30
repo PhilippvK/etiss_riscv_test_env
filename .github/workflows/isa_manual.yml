@@ -1,0 +1,69 @@
+##
+## Copyright (c) 2022 TUM Department of Electrical and Computer Engineering.
+##
+## Licensed under the Apache License, Version 2.0 (the "License");
+## you may not use this file except in compliance with the License.
+## You may obtain a copy of the License at
+##
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+##
+
+# GitHub CI build pipeline
+name: Render ISA Manual
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone wrapper repo
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Initialize Virtualenv
+      run: |
+        python -m pip install --upgrade pip virtualenv
+        python -m venv .venv
+        source .venv/bin/activate
+        pip install -r requirements.txt
+    - name: Setup M2-ISA-R
+      if: ${{ matrix.patch_etiss }}
+      run: |
+        source .venv/bin/activate
+        cd M2-ISA-R
+        pip install -r requirements.txt
+    - name: Run M2-ISA-R
+      if: ${{ matrix.patch_etiss }}
+      run: |
+        source .venv/bin/activate
+        export PYTHONPATH=$(pwd)/M2-ISA-R:$PYTHONPATH
+        python -m m2isar.frontends.coredsl2.parser etiss_arch_riscv/top.core_desc
+        python -m m2isar.backends.isa_manual.writer etiss_arch_riscv/gen_model/top.m2isarmodel --output M2-ISA-R/m2isar/backends/isa_manual/out.adoc
+    - name: Generate Datasheet
+      if: ${{ matrix.patch_etiss }}
+      run: |
+        cd M2-ISA-R/m2isar/backends/isa_manual
+        npm install
+        ./node_modules/.bin/datasheet -i M2-ISA-R/out.adoc -o manual.pdf
+
+      uses: actions/upload-artifact@v4
+      with:
+        name: isa-manual
+        path: |
+          M2-ISA-R/m2isar/backends/isa_manual/*.pdf
+          M2-ISA-R/m2isar/backends/isa_manual/*.html
